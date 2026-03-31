@@ -1,14 +1,26 @@
 package org.spms.spmsbackend.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public enum OrderSize {
+    VERY_SMALL("Very Small", 5),
+    SMALL("Small", 15),
+    MEDIUM("Medium", 25),
+    LARGE("Large", 50),
+    VERY_LARGE("Very Large", 75);
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class OrderSize {
-    private int id;
-    private String name;      // e.g. "Small", "Medium", "Big"
-    private String description;
+    private final String label;
+    private final int percentage;
+
+    OrderSize(String label, int percentage) {
+        this.label = label;
+        this.percentage = percentage;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public int getPercentage() {
+        return percentage;
+    }
 }
+

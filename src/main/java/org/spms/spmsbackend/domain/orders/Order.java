@@ -1,5 +1,6 @@
-package org.spms.spmsbackend.domain;
+package org.spms.spmsbackend.domain.orders;
 
+import org.spms.spmsbackend.domain.users.User;
 import java.time.LocalDateTime;
 
 public class Order {

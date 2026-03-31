@@ -1,4 +1,4 @@
-package org.spms.spmsbackend.domain;
+package org.spms.spmsbackend.domain.orders;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package org.spms.spmsbackend.domain;
+package org.spms.spmsbackend.domain.orders;
 
 public enum OrderSize {
     VERY_SMALL("Very Small", 5),

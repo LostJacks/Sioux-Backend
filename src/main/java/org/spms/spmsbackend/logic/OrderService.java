@@ -4,9 +4,11 @@ import org.spms.spmsbackend.domain.orders.Order;
 import org.spms.spmsbackend.domain.orders.OrderSize;
 import org.spms.spmsbackend.domain.orders.OrderStatus;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrderService implements IOrderService {
 
     @Override

@@ -1,7 +1,7 @@
 package org.spms.spmsbackend.controllers.mappers;
 
-import org.spms.spmsbackend.controllers.dtos.GetOrderResponse;
-import org.spms.spmsbackend.controllers.dtos.OrderDTO;
+import org.spms.spmsbackend.dtos.GetOrderResponse;
+import org.spms.spmsbackend.dtos.OrderDTO;
 import org.spms.spmsbackend.domain.orders.Order;
 
 import java.util.ArrayList;

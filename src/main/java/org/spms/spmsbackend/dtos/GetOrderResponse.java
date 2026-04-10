@@ -1,4 +1,4 @@
-package org.spms.spmsbackend.controllers.dtos;
+package org.spms.spmsbackend.dtos;
 
 import java.util.ArrayList;
 import java.util.List;

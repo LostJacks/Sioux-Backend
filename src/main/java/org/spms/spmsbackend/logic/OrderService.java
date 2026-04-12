@@ -1,8 +1,8 @@
 package org.spms.spmsbackend.logic;
 
-import org.spms.spmsbackend.domain.Order;
-import org.spms.spmsbackend.domain.OrderSize;
-import org.spms.spmsbackend.domain.OrderStatus;
+import org.spms.spmsbackend.domain.orders.Order;
+import org.spms.spmsbackend.domain.orders.OrderSize;
+import org.spms.spmsbackend.domain.orders.OrderStatus;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
 
 import java.util.List;

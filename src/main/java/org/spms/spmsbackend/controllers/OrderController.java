@@ -1,6 +1,6 @@
 package org.spms.spmsbackend.controllers;
 
-import org.spms.spmsbackend.controllers.dtos.GetOrderResponse;
+import org.spms.spmsbackend.dtos.GetOrderResponse;
 import org.spms.spmsbackend.controllers.mappers.OrderMapper;
 import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.orders.Order;

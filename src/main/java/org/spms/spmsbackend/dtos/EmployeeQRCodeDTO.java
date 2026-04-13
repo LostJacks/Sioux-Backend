@@ -8,8 +8,6 @@ public class EmployeeQRCodeDTO {
     private String qrCode;
     private String label;
 
-    public EmployeeQRCodeDTO() {}
-
     public EmployeeQRCodeDTO(Integer employeeId, String firstName, String lastName, String role, String qrCode, String label) {
         this.employeeId = employeeId;
         this.firstName = firstName;

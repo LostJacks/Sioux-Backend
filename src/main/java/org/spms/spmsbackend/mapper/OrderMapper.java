@@ -1,4 +1,4 @@
-package org.spms.spmsbackend.controllers.mappers;
+package org.spms.spmsbackend.mapper;
 
 import org.spms.spmsbackend.dtos.GetOrderResponse;
 import org.spms.spmsbackend.dtos.OrderDTO;

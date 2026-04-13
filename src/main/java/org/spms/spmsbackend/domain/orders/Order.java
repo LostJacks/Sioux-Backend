@@ -13,6 +13,9 @@ public class Order {
     private OrderStatus status;
     private LocalDateTime deliveredAt;
 
+    private String buildingName;
+    private LocalDateTime pickupDeadline;
+
     public Order(int id, User employee, String trackingNumber, OrderSize size, boolean pickedUp, LocalDateTime pickedUpAt, OrderStatus status, LocalDateTime deliveredAt) {
         this.id = id;
         this.employee = employee;
@@ -89,6 +92,22 @@ public class Order {
 
     public void setDeliveredAt(LocalDateTime deliveredAt) {
         this.deliveredAt = deliveredAt;
+    }
+
+    public String getBuildingName() {
+        return this.buildingName;
+    }
+
+    public LocalDateTime getPickupDeadline() {
+        return this.pickupDeadline;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public void setPickupDeadline(LocalDateTime pickupDeadline) {
+        this.pickupDeadline = pickupDeadline;
     }
 
     public boolean equals(final Object o) {

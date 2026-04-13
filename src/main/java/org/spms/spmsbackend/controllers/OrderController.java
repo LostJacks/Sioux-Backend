@@ -2,16 +2,16 @@ package org.spms.spmsbackend.controllers;
 
 import org.spms.spmsbackend.controllers.dtos.GetOrderResponse;
 import org.spms.spmsbackend.controllers.mappers.OrderMapper;
+import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.orders.Order;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrderController {
 
     private final IOrderService orderService;
@@ -25,5 +25,15 @@ public class OrderController {
         List<Order> orderList = orderService.getAllOrders();
 
         return OrderMapper.mapOrderToGetOrderResponse(orderList);
+    }
+
+    @PostMapping("/{orderId}/arrival-notification")
+    public Notification createArrivalNotification(@PathVariable int orderId) {
+        return orderService.createArrivalNotification(orderId);
+    }
+
+    @PostMapping("/{orderId}/reminder-notification")
+    public Notification createReminderNotification(@PathVariable int orderId) {
+        return orderService.createPickupReminderNotification(orderId);
     }
 }

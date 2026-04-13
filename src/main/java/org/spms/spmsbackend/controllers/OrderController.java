@@ -2,7 +2,7 @@ package org.spms.spmsbackend.controllers;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.spms.spmsbackend.domain.Order;
+import org.spms.spmsbackend.domain.orders.Order;
 import org.spms.spmsbackend.exceptions.NotFoundException;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
 import org.springframework.web.bind.annotation.*;

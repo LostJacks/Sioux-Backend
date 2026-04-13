@@ -1,8 +1,9 @@
 package org.spms.spmsbackend.logic.interfaces;
 
-import org.spms.spmsbackend.domain.Order;
-import org.spms.spmsbackend.domain.OrderSize;
-import org.spms.spmsbackend.domain.OrderStatus;
+import org.spms.spmsbackend.domain.notifications.Notification;
+import org.spms.spmsbackend.domain.orders.Order;
+import org.spms.spmsbackend.domain.orders.OrderSize;
+import org.spms.spmsbackend.domain.orders.OrderStatus;
 
 import java.util.List;
 
@@ -24,4 +25,6 @@ public interface IOrderService {
 
     void deleteOrder(int id);
 
+    Notification createArrivalNotification(int orderId);
+    Notification createPickupReminderNotification(int orderId);
 }

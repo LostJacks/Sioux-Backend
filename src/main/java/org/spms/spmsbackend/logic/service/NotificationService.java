@@ -1,4 +1,4 @@
-package org.spms.spmsbackend.logic;
+package org.spms.spmsbackend.logic.service;
 
 import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.notifications.NotificationType;

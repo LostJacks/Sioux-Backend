@@ -1,30 +1,76 @@
 package org.spms.spmsbackend.controllers;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.orders.Order;
 import org.spms.spmsbackend.exceptions.NotFoundException;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrderController {
-    private IOrderService IOrderService;
+
+    private IOrderService orderService;
 
     @GetMapping
-    public List<Order> getAllOrders(){ return this.IOrderService.getAllOrders();}
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
 
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable int id, HttpServletResponse response){
-        try{
-            return this.IOrderService.getOrderById(id);
-        } catch (NotFoundException ex){
-            response.setStatus(418);
-            return null;
+    public ResponseEntity<Order> getOrderById(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(orderService.getOrderById(id));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<Order>> getOrdersForEmployee(@PathVariable int employeeId) {
+        return ResponseEntity.ok(orderService.getOrdersForEmployee(employeeId));
+    }
+
+    @GetMapping("/tracking/{trackingNumber}")
+    public ResponseEntity<Order> getOrderByTrackingNumber(@PathVariable String trackingNumber) {
+        try {
+            return ResponseEntity.ok(orderService.getOrderByTrackingNumber(trackingNumber));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{id}/arrival-notification")
+    public ResponseEntity<Notification> createArrivalNotification(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(orderService.createArrivalNotification(id));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping("/{id}/reminder-notification")
+    public ResponseEntity<Notification> createPickupReminderNotification(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(orderService.createPickupReminderNotification(id));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PutMapping("/{id}/pickup")
+    public ResponseEntity<Order> markAsPickedUp(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(orderService.markAsPickedUp(id));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

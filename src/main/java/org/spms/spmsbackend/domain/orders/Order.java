@@ -16,6 +16,12 @@ public class Order {
     private String buildingName;
     private LocalDateTime pickupDeadline;
 
+    /** Free-text recipient name as printed on the parcel (may be null). */
+    private String recipientName;
+
+    /** Whether this parcel is for an employee, the company, or unresolved. */
+    private AddressedTo addressedTo;
+
     public Order(int id, User employee, String trackingNumber, OrderSize size, boolean pickedUp, LocalDateTime pickedUpAt, OrderStatus status, LocalDateTime deliveredAt) {
         this.id = id;
         this.employee = employee;
@@ -108,6 +114,22 @@ public class Order {
 
     public void setPickupDeadline(LocalDateTime pickupDeadline) {
         this.pickupDeadline = pickupDeadline;
+    }
+
+    public String getRecipientName() {
+        return this.recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
+
+    public AddressedTo getAddressedTo() {
+        return this.addressedTo;
+    }
+
+    public void setAddressedTo(AddressedTo addressedTo) {
+        this.addressedTo = addressedTo;
     }
 
     public boolean equals(final Object o) {

@@ -25,6 +25,16 @@ public interface IOrderService {
 
     void deleteOrder(int id);
 
-    Notification createArrivalNotification(int orderId);
+    /**
+     * Trigger an arrival notification for the given order.
+     *
+     * @param orderId       the order/package id
+     * @param targetUserIds optional manager subset for Sioux/unaddressed
+     *                      packages. {@code null} or empty means "fan out
+     *                      to all managers". Ignored for personal packages.
+     */
+    Notification createArrivalNotification(int orderId, List<Integer> targetUserIds);
+
     Notification createPickupReminderNotification(int orderId);
 }
+

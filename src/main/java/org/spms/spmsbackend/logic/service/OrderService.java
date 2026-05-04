@@ -94,14 +94,19 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Notification createArrivalNotification(int orderId) {
-        Order order = getOrderById(orderId);
-        return notificationService.createOrderArrivedNotification(order);
+    public Notification createArrivalNotification(int orderId, List<Integer> targetUserIds) {
+        PackageEntity entity = packageRepository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
+        Notification result = notificationService.notifyPackageArrived(entity, targetUserIds);
+        // Persist any classification update the service made.
+        packageRepository.save(entity);
+        return result;
     }
 
     @Override
     public Notification createPickupReminderNotification(int orderId) {
-        Order order = getOrderById(orderId);
-        return notificationService.createPickupReminderNotification(order);
+        PackageEntity entity = packageRepository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
+        return notificationService.notifyPickupReminder(entity);
     }
 }

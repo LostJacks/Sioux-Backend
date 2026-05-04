@@ -3,6 +3,7 @@ package org.spms.spmsbackend.controllers;
 import lombok.AllArgsConstructor;
 import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.orders.Order;
+import org.spms.spmsbackend.dtos.ArrivalNotificationRequest;
 import org.spms.spmsbackend.exceptions.NotFoundException;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
 import org.springframework.http.HttpStatus;
@@ -48,9 +49,13 @@ public class OrderController {
     }
 
     @PostMapping("/{id}/arrival-notification")
-    public ResponseEntity<Notification> createArrivalNotification(@PathVariable int id) {
+    public ResponseEntity<Notification> createArrivalNotification(
+            @PathVariable int id,
+            @RequestBody(required = false) ArrivalNotificationRequest body
+    ) {
         try {
-            return ResponseEntity.ok(orderService.createArrivalNotification(id));
+            List<Integer> targetUserIds = body != null ? body.getTargetUserIds() : null;
+            return ResponseEntity.ok(orderService.createArrivalNotification(id, targetUserIds));
         } catch (NotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

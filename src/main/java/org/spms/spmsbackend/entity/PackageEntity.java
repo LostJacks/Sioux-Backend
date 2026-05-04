@@ -49,6 +49,20 @@ public class PackageEntity {
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
 
+    /**
+     * Free-text recipient as printed on the parcel. May be {@code null} when
+     * the carrier left no recipient (e.g. addressed only to "Sioux"). Added
+     * for US-03 to support classifying company-addressed parcels.
+     */
+    @Column(name = "recipient_name", length = 255)
+    private String recipientName;
+
+    /**
+     * EMPLOYEE / COMPANY / UNKNOWN. Stored as a string so future values can
+     * be added without migrations. Added for US-03.
+     */
+    @Column(name = "addressed_to", length = 20)
+    private String addressedTo;
 
 
     public Integer getId() { return id; }
@@ -81,6 +95,11 @@ public class PackageEntity {
     public LocalDate getDeliveryDate() { return deliveryDate; }
     public void setDeliveryDate(LocalDate deliveryDate) { this.deliveryDate = deliveryDate; }
 
+    public String getRecipientName() { return recipientName; }
+    public void setRecipientName(String recipientName) { this.recipientName = recipientName; }
+
+    public String getAddressedTo() { return addressedTo; }
+    public void setAddressedTo(String addressedTo) { this.addressedTo = addressedTo; }
 }
 
 

@@ -14,6 +14,7 @@ public class Order {
     private LocalDateTime deliveredAt;
 
     private String buildingName;
+    private String rowLocation;
     private LocalDateTime pickupDeadline;
 
     public Order(int id, User employee, String trackingNumber, OrderSize size, boolean pickedUp, LocalDateTime pickedUpAt, OrderStatus status, LocalDateTime deliveredAt) {
@@ -105,6 +106,9 @@ public class Order {
     public void setBuildingName(String buildingName) {
         this.buildingName = buildingName;
     }
+
+    public String getRowLocation() { return rowLocation; }
+    public void setRowLocation(String rowLocation) { this.rowLocation = rowLocation; }
 
     public void setPickupDeadline(LocalDateTime pickupDeadline) {
         this.pickupDeadline = pickupDeadline;

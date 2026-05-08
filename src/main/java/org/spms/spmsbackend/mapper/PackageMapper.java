@@ -5,7 +5,11 @@ import org.spms.spmsbackend.domain.orders.OrderSize;
 import org.spms.spmsbackend.domain.orders.OrderStatus;
 import org.spms.spmsbackend.domain.users.Role;
 import org.spms.spmsbackend.domain.users.User;
+import org.spms.spmsbackend.entity.BuildingEntity;
+import org.spms.spmsbackend.entity.FloorEntity;
 import org.spms.spmsbackend.entity.PackageEntity;
+import org.spms.spmsbackend.entity.ShelfEntity;
+import org.spms.spmsbackend.entity.ShelfRowEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -54,6 +58,20 @@ public class PackageMapper {
             LocalDateTime deliveredAt = entity.getDeliveryDate().atStartOfDay();
             order.setDeliveredAt(deliveredAt);
             order.setPickupDeadline(deliveredAt.plusDays(5));
+        }
+
+        if (entity.getAssignedRow() != null) {
+            ShelfRowEntity row = entity.getAssignedRow();
+            ShelfEntity shelf = row.getShelf();
+            FloorEntity floor = shelf != null ? shelf.getFloor() : null;
+            BuildingEntity building = floor != null ? floor.getBuilding() : null;
+
+            StringBuilder loc = new StringBuilder();
+            if (building != null) loc.append(building.getName());
+            if (floor != null) loc.append(", Floor ").append(floor.getFloorNumber());
+            if (shelf != null) loc.append(", Shelf ").append(shelf.getShelfNumber());
+            loc.append(", Row ").append(row.getRowNumber());
+            order.setRowLocation(loc.toString());
         }
 
         return order;

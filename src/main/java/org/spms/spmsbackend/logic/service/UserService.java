@@ -33,6 +33,17 @@ public class UserService {
                 .map(userMapper::toDomain);
     }
 
+    /** Used by US-03 receptionist UI to populate the manager picker. */
+    public List<User> getUsersByRole(String role) {
+        if (role == null || role.isBlank()) {
+            return getAllEmployees();
+        }
+        return userRepository.findByRoleIgnoreCase(role.trim())
+                .stream()
+                .map(userMapper::toDomain)
+                .toList();
+    }
+
     public User createUser(CreateUserRequest request) {
         UserEntity entity = new UserEntity();
         entity.setFirstName(request.getFirstName());

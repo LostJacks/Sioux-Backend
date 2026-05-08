@@ -1,5 +1,6 @@
 package org.spms.spmsbackend.mapper;
 
+import org.spms.spmsbackend.domain.orders.AddressedTo;
 import org.spms.spmsbackend.domain.orders.Order;
 import org.spms.spmsbackend.domain.orders.OrderSize;
 import org.spms.spmsbackend.domain.orders.OrderStatus;
@@ -60,6 +61,11 @@ public class PackageMapper {
             order.setPickupDeadline(deliveredAt.plusDays(5));
         }
 
+        // US-03: Sioux package classification fields.
+        order.setRecipientName(entity.getRecipientName());
+        order.setAddressedTo(parseAddressedTo(entity.getAddressedTo()));
+
+        // develop: human-readable shelf-row location string.
         if (entity.getAssignedRow() != null) {
             ShelfRowEntity row = entity.getAssignedRow();
             ShelfEntity shelf = row.getShelf();
@@ -75,6 +81,17 @@ public class PackageMapper {
         }
 
         return order;
+    }
+
+    private AddressedTo parseAddressedTo(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return AddressedTo.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return AddressedTo.UNKNOWN;
+        }
     }
 
     private OrderSize parseSize(String size) {

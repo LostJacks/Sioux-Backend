@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * User lookup + creation endpoints.
+ *
+ * <p>{@code GET /api/users} lists users (optionally filtered by role — used
+ * by the US-03 receptionist UI to populate the manager picker).
+ * {@code POST /api/users} creates a new user (added on develop).</p>
+ */
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -20,8 +27,11 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllEmployees());
+    public ResponseEntity<List<User>> getUsers(@RequestParam(name = "role", required = false) String role) {
+        if (role == null || role.isBlank()) {
+            return ResponseEntity.ok(userService.getAllEmployees());
+        }
+        return ResponseEntity.ok(userService.getUsersByRole(role));
     }
 
     @PostMapping

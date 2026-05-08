@@ -1,5 +1,7 @@
 package org.spms.spmsbackend.logic.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.orders.Order;
 import org.spms.spmsbackend.domain.orders.OrderSize;
@@ -20,6 +22,8 @@ import java.util.List;
 
 @Service
 public class OrderService implements IOrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private final NotificationService notificationService;
     private final PackageRepository packageRepository;
@@ -94,7 +98,22 @@ public class OrderService implements IOrderService {
         entity.setStatus("STORED");
         entity.setPickedUp(false);
 
-        return packageMapper.toDomain(packageRepository.save(entity));
+        PackageEntity saved = packageRepository.save(entity);
+
+        // US-03: real workflow trigger. The classifier decides personal vs.
+        // global; for the current store-modal flow there is always a target
+        // employee, so this fans out as a personal arrival notification.
+        // Failures are logged and swallowed so storage is never blocked by
+        // notification errors.
+        try {
+            notificationService.notifyPackageArrived(saved, null);
+            packageRepository.save(saved);
+        } catch (Exception ex) {
+            log.warn("notifyPackageArrived failed for package {}: {}",
+                    saved.getId(), ex.getMessage());
+        }
+
+        return packageMapper.toDomain(saved);
     }
 
     @Override
@@ -107,6 +126,17 @@ public class OrderService implements IOrderService {
         entity.setStatus("PICKED_UP");
 
         PackageEntity saved = packageRepository.save(entity);
+
+        // US-03: send a pickup confirmation to the owner so they get a
+        // receipt in-app + via email. Failures are logged so the actual
+        // pickup operation never gets blocked by mail/notification issues.
+        try {
+            notificationService.notifyPickupConfirmed(saved);
+        } catch (Exception ex) {
+            log.warn("notifyPickupConfirmed failed for package {}: {}",
+                    saved.getId(), ex.getMessage());
+        }
+
         return packageMapper.toDomain(saved);
     }
 
@@ -126,14 +156,19 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Notification createArrivalNotification(int orderId) {
-        Order order = getOrderById(orderId);
-        return notificationService.createOrderArrivedNotification(order);
+    public Notification createArrivalNotification(int orderId, List<Integer> targetUserIds) {
+        PackageEntity entity = packageRepository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
+        Notification result = notificationService.notifyPackageArrived(entity, targetUserIds);
+        // Persist any classification update the service made.
+        packageRepository.save(entity);
+        return result;
     }
 
     @Override
     public Notification createPickupReminderNotification(int orderId) {
-        Order order = getOrderById(orderId);
-        return notificationService.createPickupReminderNotification(order);
+        PackageEntity entity = packageRepository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
+        return notificationService.notifyPickupReminder(entity);
     }
 }

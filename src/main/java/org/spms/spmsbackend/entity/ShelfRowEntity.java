@@ -21,7 +21,7 @@ public class ShelfRowEntity {
     @JsonIgnoreProperties({"rows"})   // prevent recursion when serializing shelf → rows → shelf
     private ShelfEntity shelf;
 
-    @Column(name = "row_number")
+    @Column(name = "row_num")
     private Integer rowNumber;
 
     // DB: decimal(5,2) default 100.00

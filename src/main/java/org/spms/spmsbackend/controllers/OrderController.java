@@ -3,6 +3,7 @@ package org.spms.spmsbackend.controllers;
 import lombok.AllArgsConstructor;
 import org.spms.spmsbackend.domain.notifications.Notification;
 import org.spms.spmsbackend.domain.orders.Order;
+import org.spms.spmsbackend.dtos.StorePackageRequest;
 import org.spms.spmsbackend.exceptions.NotFoundException;
 import org.spms.spmsbackend.logic.interfaces.IOrderService;
 import org.springframework.http.HttpStatus;
@@ -62,6 +63,19 @@ public class OrderController {
             return ResponseEntity.ok(orderService.createPickupReminderNotification(id));
         } catch (NotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping("/store")
+    public ResponseEntity<Order> storePackage(@RequestBody StorePackageRequest request) {
+        try {
+            return ResponseEntity.ok(orderService.storePackage(
+                    request.getTrackingNumber(),
+                    request.getEmployeeId(),
+                    request.getRowId()
+            ));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 

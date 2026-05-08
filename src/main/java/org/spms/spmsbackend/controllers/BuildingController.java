@@ -1,5 +1,6 @@
 package org.spms.spmsbackend.controllers;
 
+import org.spms.spmsbackend.dtos.BuildingTreeDTO;
 import org.spms.spmsbackend.dtos.CreateBuildingRequest;
 import org.spms.spmsbackend.entity.BuildingEntity;
 import org.spms.spmsbackend.logic.service.BuildingService;
@@ -26,5 +27,10 @@ public class BuildingController {
     @GetMapping
     public List<BuildingEntity> getBuildings() {
         return buildingService.getAllBuildings();
+    }
+
+    @GetMapping("/full")
+    public List<BuildingTreeDTO> getBuildingTree() {
+        return buildingService.getBuildingTree();
     }
 }

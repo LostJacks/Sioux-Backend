@@ -126,6 +126,17 @@ public class OrderService implements IOrderService {
         entity.setStatus("PICKED_UP");
 
         PackageEntity saved = packageRepository.save(entity);
+
+        // US-03: send a pickup confirmation to the owner so they get a
+        // receipt in-app + via email. Failures are logged so the actual
+        // pickup operation never gets blocked by mail/notification issues.
+        try {
+            notificationService.notifyPickupConfirmed(saved);
+        } catch (Exception ex) {
+            log.warn("notifyPickupConfirmed failed for package {}: {}",
+                    saved.getId(), ex.getMessage());
+        }
+
         return packageMapper.toDomain(saved);
     }
 

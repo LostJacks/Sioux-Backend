@@ -8,5 +8,7 @@ public enum NotificationType {
     /** Global: a package addressed to Sioux as a company. */
     COMPANY_PACKAGE,
     /** Global: a package whose recipient could not be resolved. */
-    UNADDRESSED_PACKAGE
+    UNADDRESSED_PACKAGE,
+    /** Personal: confirmation that the employee picked up their package. */
+    PICKUP_CONFIRMED
 }

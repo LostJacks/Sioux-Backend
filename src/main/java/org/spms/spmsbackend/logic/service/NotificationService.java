@@ -199,6 +199,36 @@ public class NotificationService {
         return notificationMapper.toDomain(persisted.get(0));
     }
 
+    /**
+     * Pickup confirmation: the package has just been handed over. Personal,
+     * persisted + mailed to the owner so they have a receipt.
+     */
+    public Notification notifyPickupConfirmed(PackageEntity pkg) {
+        if (pkg == null || pkg.getEmployee() == null) {
+            throw new NotFoundException();
+        }
+        UserEntity owner = pkg.getEmployee();
+        String tracking = pkg.getTrackingNumber() != null ? pkg.getTrackingNumber() : "(no tracking)";
+        String title = "Pickup confirmed";
+        String message = "Your package " + tracking
+                + " has been handed over. Thanks for picking it up.";
+
+        NotificationEntity entity = persist(
+                owner,
+                pkg,
+                NotificationScope.PERSONAL,
+                NotificationType.PICKUP_CONFIRMED,
+                NotificationChannel.BOTH,
+                title,
+                message
+        );
+
+        if (owner.getEmail() != null && !owner.getEmail().isBlank()) {
+            mailService.send(List.of(owner.getEmail()), title, message);
+        }
+        return notificationMapper.toDomain(entity);
+    }
+
     /** Pickup reminder, persisted + mailed to the owner. */
     public Notification notifyPickupReminder(PackageEntity pkg) {
         if (pkg == null || pkg.getEmployee() == null) {

@@ -4,6 +4,7 @@ import org.spms.spmsbackend.dtos.BuildingTreeDTO;
 import org.spms.spmsbackend.dtos.CreateBuildingRequest;
 import org.spms.spmsbackend.entity.*;
 import org.spms.spmsbackend.repository.BuildingRepository;
+import org.spms.spmsbackend.repository.ShelfRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +15,11 @@ import java.util.List;
 public class BuildingService {
 
     private final BuildingRepository buildingRepository;
+    private final ShelfRepository shelfRepository;
 
-    public BuildingService(BuildingRepository buildingRepository) {
+    public BuildingService(BuildingRepository buildingRepository, ShelfRepository shelfRepository) {
         this.buildingRepository = buildingRepository;
+        this.shelfRepository = shelfRepository;
     }
 
     public BuildingEntity createBuilding(CreateBuildingRequest request) {
@@ -60,6 +63,20 @@ public class BuildingService {
 
     public List<BuildingEntity> getAllBuildings() {
         return buildingRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean shelfHasPendingPackages(Integer shelfId) {
+        ShelfEntity shelf = shelfRepository.findById(shelfId)
+                .orElseThrow(() -> new RuntimeException("Shelf not found: " + shelfId));
+        return shelf.getRows().stream()
+                .flatMap(row -> row.getPackages().stream())
+                .anyMatch(pkg -> !Boolean.TRUE.equals(pkg.getPickedUp()));
+    }
+
+    @Transactional
+    public void deleteShelf(Integer shelfId) {
+        shelfRepository.deleteById(shelfId);
     }
 
     @Transactional(readOnly = true)

@@ -4,9 +4,11 @@ import org.spms.spmsbackend.dtos.BuildingTreeDTO;
 import org.spms.spmsbackend.dtos.CreateBuildingRequest;
 import org.spms.spmsbackend.entity.BuildingEntity;
 import org.spms.spmsbackend.logic.service.BuildingService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/buildings")
@@ -32,5 +34,17 @@ public class BuildingController {
     @GetMapping("/full")
     public List<BuildingTreeDTO> getBuildingTree() {
         return buildingService.getBuildingTree();
+    }
+
+    @GetMapping("/shelves/{shelfId}/check")
+    public ResponseEntity<Map<String, Boolean>> checkShelf(@PathVariable Integer shelfId) {
+        boolean hasPending = buildingService.shelfHasPendingPackages(shelfId);
+        return ResponseEntity.ok(Map.of("hasPendingPackages", hasPending));
+    }
+
+    @DeleteMapping("/shelves/{shelfId}")
+    public ResponseEntity<Void> deleteShelf(@PathVariable Integer shelfId) {
+        buildingService.deleteShelf(shelfId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,19 +1,19 @@
 package org.spms.spmsbackend.controllers;
 
 import org.spms.spmsbackend.domain.users.User;
+import org.spms.spmsbackend.dtos.CreateUserRequest;
 import org.spms.spmsbackend.logic.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * Lightweight user lookup endpoints. US-03 only needs the manager picker;
- * if {@code role} is omitted the endpoint behaves like a generic "list users".
+ * User lookup + creation endpoints.
+ *
+ * <p>{@code GET /api/users} lists users (optionally filtered by role — used
+ * by the US-03 receptionist UI to populate the manager picker).
+ * {@code POST /api/users} creates a new user (added on develop).</p>
  */
 @RestController
 @RequestMapping("/api/users")
@@ -32,5 +32,10 @@ public class UserController {
             return ResponseEntity.ok(userService.getAllEmployees());
         }
         return ResponseEntity.ok(userService.getUsersByRole(role));
+    }
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
+        return ResponseEntity.ok(userService.createUser(request));
     }
 }

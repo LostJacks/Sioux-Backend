@@ -19,6 +19,8 @@ public interface IOrderService {
 
     Order createOrder(int employeeId, String trackingNumber, OrderSize size);
 
+    Order storePackage(String trackingNumber, Integer employeeId, Integer rowId);
+
     Order markAsPickedUp(int orderId);
 
     Order updateStatus(int orderId, OrderStatus newStatus);

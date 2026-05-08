@@ -13,10 +13,23 @@ public class UserMapper {
         user.setId(entity.getId());
         user.setFirstName(entity.getFirstName());
         user.setLastName(entity.getLastName());
-        user.setRole(Role.valueOf(entity.getRole().toUpperCase()));
+        user.setEmail(entity.getEmail());
+        user.setRole(parseRole(entity.getRole()));
         user.setBuilding(
                 entity.getBuilding() != null ? entity.getBuilding().getName() : null
         );
         return user;
+    }
+
+    private Role parseRole(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return Role.EMPLOYEE;
+        }
+        try {
+            return Role.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            // Unknown role string — don't blow up the response; treat as EMPLOYEE.
+            return Role.EMPLOYEE;
+        }
     }
 }

@@ -11,4 +11,11 @@ import java.util.Optional;
 public interface PackageRepository extends JpaRepository<PackageEntity, Integer> {
     Optional<PackageEntity> findByTrackingNumber(String trackingNumber);
     List<PackageEntity> findByEmployee_Id(Integer employeeId);
+
+    /**
+     * Returns all packages that have not been picked up yet AND belong to an
+     * identified employee (i.e. personal packages that can receive a reminder).
+     * Used by the reminder scheduler.
+     */
+    List<PackageEntity> findByPickedUpFalseAndEmployeeIsNotNull();
 }

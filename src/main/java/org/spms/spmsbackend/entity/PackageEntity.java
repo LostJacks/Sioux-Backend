@@ -64,6 +64,14 @@ public class PackageEntity {
     @Column(name = "addressed_to", length = 20)
     private String addressedTo;
 
+    /** How many automated pickup reminders have been sent for this package. */
+    @Column(name = "reminder_count", nullable = false)
+    private Integer reminderCount = 0;
+
+    /** Timestamp of the most recent automated reminder (null = none sent yet). */
+    @Column(name = "last_reminder_sent_at")
+    private LocalDateTime lastReminderSentAt;
+
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -100,6 +108,12 @@ public class PackageEntity {
 
     public String getAddressedTo() { return addressedTo; }
     public void setAddressedTo(String addressedTo) { this.addressedTo = addressedTo; }
+
+    public Integer getReminderCount() { return reminderCount == null ? 0 : reminderCount; }
+    public void setReminderCount(Integer reminderCount) { this.reminderCount = reminderCount; }
+
+    public LocalDateTime getLastReminderSentAt() { return lastReminderSentAt; }
+    public void setLastReminderSentAt(LocalDateTime lastReminderSentAt) { this.lastReminderSentAt = lastReminderSentAt; }
 }
 
 

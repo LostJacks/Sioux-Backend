@@ -4,6 +4,7 @@ import org.spms.spmsbackend.entity.NotificationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -17,4 +18,11 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     /** Notifications created since a given id, used for client-side polling. */
     List<NotificationEntity> findByRecipient_IdAndIdGreaterThanOrderByCreatedAtDesc(Integer recipientId, Integer afterId);
+
+    /**
+     * De-duplication check: returns true if a reminder of the given type was
+     * already sent for this package after the given timestamp. Prevents
+     * spamming the same employee multiple times per scheduler run or day.
+     */
+    boolean existsByRelatedPackage_IdAndTypeAndCreatedAtAfter(Integer packageId, String type, LocalDateTime since);
 }

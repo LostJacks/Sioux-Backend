@@ -20,8 +20,8 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
     List<NotificationEntity> findByRecipient_IdAndIdGreaterThanOrderByCreatedAtDesc(Integer recipientId, Integer afterId);
 
     /**
-     * De-duplication check: returns true if a reminder of the given type was
-     * already sent for this package after the given timestamp.
+     * De-duplication check: returns true if a reminder was already sent
+     * for this package after the given timestamp.
      */
     boolean existsByRelatedPackage_IdAndTypeAndCreatedAtAfter(Integer packageId, String type, LocalDateTime since);
 

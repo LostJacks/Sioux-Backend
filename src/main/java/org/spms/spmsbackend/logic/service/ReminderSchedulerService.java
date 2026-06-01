@@ -18,8 +18,6 @@ import java.util.List;
  * All settings (enabled, delays, limits) are read from the DB at runtime
  * via {@link ReminderSettingsService}, so the receptionist's UI changes
  * take effect on the next scheduler run without a restart.
- *
- * <p>Runs every minute; the settings control whether anything actually happens.</p>
  */
 @Service
 public class ReminderSchedulerService {

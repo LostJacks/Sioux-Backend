@@ -64,6 +64,9 @@ public class PackageEntity {
     @Column(name = "addressed_to", length = 20)
     private String addressedTo;
 
+    @Column(name = "reminder_count", nullable = false, columnDefinition = "int default 0")
+    private int reminderCount = 0;
+
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -100,6 +103,9 @@ public class PackageEntity {
 
     public String getAddressedTo() { return addressedTo; }
     public void setAddressedTo(String addressedTo) { this.addressedTo = addressedTo; }
+
+    public int getReminderCount() { return reminderCount; }
+    public void setReminderCount(int reminderCount) { this.reminderCount = reminderCount; }
 }
 
 

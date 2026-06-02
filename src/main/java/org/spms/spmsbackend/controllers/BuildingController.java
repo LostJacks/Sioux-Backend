@@ -22,8 +22,12 @@ public class BuildingController {
     }
 
     @PostMapping
-    public BuildingEntity createBuilding(@RequestBody CreateBuildingRequest request) {
-        return buildingService.createBuilding(request);
+    public ResponseEntity<?> createBuilding(@RequestBody CreateBuildingRequest request) {
+        try {
+            return ResponseEntity.ok(buildingService.createBuilding(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @GetMapping

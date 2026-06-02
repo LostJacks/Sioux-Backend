@@ -30,6 +30,10 @@ public class BuildingService {
     }
 
     public BuildingEntity createBuilding(CreateBuildingRequest request) {
+        if (buildingRepository.existsByNameIgnoreCase(request.getName())) {
+            throw new IllegalArgumentException("A building with the name '" + request.getName() + "' already exists.");
+        }
+
         BuildingEntity building = new BuildingEntity();
         building.setName(request.getName());
         building.setAddress(request.getAddress());

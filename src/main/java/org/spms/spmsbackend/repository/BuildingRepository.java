@@ -4,4 +4,5 @@ import org.spms.spmsbackend.entity.BuildingEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BuildingRepository extends JpaRepository<BuildingEntity, Integer> {
+    boolean existsByNameIgnoreCase(String name);
 }

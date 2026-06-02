@@ -2,8 +2,11 @@ package org.spms.spmsbackend.dtos;
 
 public class StorePackageRequest {
     private String trackingNumber;
+    /** Null for Sioux / unknown packages. */
     private Integer employeeId;
     private Integer rowId;
+    /** "Sioux" for company packages, null for unknown/unaddressed. */
+    private String recipientName;
 
     public String getTrackingNumber() { return trackingNumber; }
     public void setTrackingNumber(String trackingNumber) { this.trackingNumber = trackingNumber; }
@@ -13,4 +16,7 @@ public class StorePackageRequest {
 
     public Integer getRowId() { return rowId; }
     public void setRowId(Integer rowId) { this.rowId = rowId; }
+
+    public String getRecipientName() { return recipientName; }
+    public void setRecipientName(String recipientName) { this.recipientName = recipientName; }
 }

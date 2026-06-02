@@ -19,7 +19,9 @@ public interface IOrderService {
 
     Order createOrder(int employeeId, String trackingNumber, OrderSize size);
 
-    Order storePackage(String trackingNumber, Integer employeeId, Integer rowId);
+    Order storePackage(String trackingNumber, Integer employeeId, Integer rowId, String recipientName);
+
+    Notification broadcastUnknownPackage(int orderId, String customMessage);
 
     Order markAsPickedUp(int orderId);
 

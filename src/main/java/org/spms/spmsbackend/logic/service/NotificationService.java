@@ -229,6 +229,44 @@ public class NotificationService {
         return notificationMapper.toDomain(entity);
     }
 
+    /**
+     * Broadcasts a custom message to ALL users in the system.
+     * Used for unknown/unaddressed packages so any employee can check
+     * if it belongs to them.
+     */
+    public Notification notifyUnknownBroadcast(PackageEntity pkg, String customMessage) {
+        if (pkg == null) throw new NotFoundException();
+
+        List<UserEntity> allUsers = userRepository.findAll();
+        if (allUsers.isEmpty()) {
+            log.warn("[NotificationService] No users found for unknown package broadcast.");
+            return synthetic(pkg, NotificationType.UNADDRESSED_PACKAGE,
+                    "Unaddressed package arrived", customMessage);
+        }
+
+        String title = "Unaddressed package arrived";
+        List<NotificationEntity> persisted = new ArrayList<>();
+        List<String> mailRecipients = new ArrayList<>(fallbackRecipients);
+
+        for (UserEntity user : allUsers) {
+            NotificationEntity row = persist(
+                    user, pkg,
+                    NotificationScope.GLOBAL,
+                    NotificationType.UNADDRESSED_PACKAGE,
+                    NotificationChannel.BOTH,
+                    title,
+                    customMessage
+            );
+            persisted.add(row);
+            if (user.getEmail() != null && !user.getEmail().isBlank()) {
+                mailRecipients.add(user.getEmail());
+            }
+        }
+
+        mailService.send(distinct(mailRecipients), title, customMessage);
+        return notificationMapper.toDomain(persisted.get(0));
+    }
+
     /** Pickup reminder, persisted + mailed to the owner. */
     public Notification notifyPickupReminder(PackageEntity pkg) {
         if (pkg == null || pkg.getEmployee() == null) {

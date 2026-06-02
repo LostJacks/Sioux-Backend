@@ -77,10 +77,23 @@ public class OrderController {
             return ResponseEntity.ok(orderService.storePackage(
                     request.getTrackingNumber(),
                     request.getEmployeeId(),
-                    request.getRowId()
+                    request.getRowId(),
+                    request.getRecipientName()
             ));
         } catch (NotFoundException ex) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{id}/broadcast")
+    public ResponseEntity<Notification> broadcastUnknownPackage(
+            @PathVariable int id,
+            @RequestBody java.util.Map<String, String> body) {
+        try {
+            String message = body.getOrDefault("message", "An unaddressed package has arrived. Please contact the receptionist if it may be yours.");
+            return ResponseEntity.ok(orderService.broadcastUnknownPackage(id, message));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

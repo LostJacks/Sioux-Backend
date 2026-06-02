@@ -81,15 +81,21 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Order storePackage(String trackingNumber, Integer employeeId, Integer rowId) {
+    public Order storePackage(String trackingNumber, Integer employeeId, Integer rowId, String recipientName) {
         PackageEntity entity = packageRepository.findByTrackingNumber(trackingNumber)
                 .orElse(new PackageEntity());
 
         entity.setTrackingNumber(trackingNumber);
+        entity.setRecipientName(recipientName);
 
-        UserEntity employee = userRepository.findById(employeeId)
-                .orElseThrow(NotFoundException::new);
-        entity.setEmployee(employee);
+        // employeeId is null for Sioux / unknown packages.
+        if (employeeId != null) {
+            UserEntity employee = userRepository.findById(employeeId)
+                    .orElseThrow(NotFoundException::new);
+            entity.setEmployee(employee);
+        } else {
+            entity.setEmployee(null);
+        }
 
         ShelfRowEntity row = shelfRowRepository.findById(rowId)
                 .orElseThrow(NotFoundException::new);
@@ -100,20 +106,31 @@ public class OrderService implements IOrderService {
 
         PackageEntity saved = packageRepository.save(entity);
 
-        // US-03: real workflow trigger. The classifier decides personal vs.
-        // global; for the current store-modal flow there is always a target
-        // employee, so this fans out as a personal arrival notification.
-        // Failures are logged and swallowed so storage is never blocked by
-        // notification errors.
-        try {
-            notificationService.notifyPackageArrived(saved, null);
-            packageRepository.save(saved);
-        } catch (Exception ex) {
-            log.warn("notifyPackageArrived failed for package {}: {}",
-                    saved.getId(), ex.getMessage());
+        // For unknown/unaddressed packages (no employee, no recipient name) skip
+        // the auto-notification — the receptionist will broadcast a custom message
+        // via broadcastUnknownPackage so employees only get one notification.
+        // For Sioux packages: classifier → COMPANY → fans out to managers.
+        // For personal packages: classifier → EMPLOYEE → notifies the owner.
+        boolean isUnknown = employeeId == null
+                && (recipientName == null || recipientName.isBlank());
+        if (!isUnknown) {
+            try {
+                notificationService.notifyPackageArrived(saved, null);
+                packageRepository.save(saved);
+            } catch (Exception ex) {
+                log.warn("notifyPackageArrived failed for package {}: {}",
+                        saved.getId(), ex.getMessage());
+            }
         }
 
         return packageMapper.toDomain(saved);
+    }
+
+    @Override
+    public Notification broadcastUnknownPackage(int orderId, String customMessage) {
+        PackageEntity entity = packageRepository.findById(orderId)
+                .orElseThrow(NotFoundException::new);
+        return notificationService.notifyUnknownBroadcast(entity, customMessage);
     }
 
     @Override

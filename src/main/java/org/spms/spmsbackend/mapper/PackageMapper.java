@@ -78,6 +78,9 @@ public class PackageMapper {
             if (shelf != null) loc.append(", Shelf ").append(shelf.getShelfNumber());
             loc.append(", Row ").append(row.getRowNumber());
             order.setRowLocation(loc.toString());
+            if (floor != null) order.setFloorNumber(floor.getFloorNumber());
+            if (shelf != null) order.setShelfNumber(shelf.getShelfNumber());
+            order.setRowNumber(row.getRowNumber());
         }
 
         return order;

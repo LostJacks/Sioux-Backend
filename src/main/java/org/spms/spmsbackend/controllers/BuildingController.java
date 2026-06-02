@@ -26,6 +26,11 @@ public class BuildingController {
         return buildingService.createBuilding(request);
     }
 
+    @PutMapping("/{id}")
+    public BuildingEntity updateBuilding(@PathVariable Integer id, @RequestBody CreateBuildingRequest request) {
+        return buildingService.updateBuilding(id, request);
+    }
+
     @GetMapping
     public List<BuildingEntity> getBuildings() {
         return buildingService.getAllBuildings();

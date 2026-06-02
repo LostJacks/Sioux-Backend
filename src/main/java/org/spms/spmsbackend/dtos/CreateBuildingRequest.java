@@ -7,6 +7,7 @@ import java.util.List;
 public class CreateBuildingRequest {
     private String name;
     private String address;
+    private Integer floorNumber;
     private List<ShelfRequest> shelves;
 
     @Getter

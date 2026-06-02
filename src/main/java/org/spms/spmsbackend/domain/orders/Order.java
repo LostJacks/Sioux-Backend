@@ -15,6 +15,9 @@ public class Order {
 
     private String buildingName;
     private String rowLocation;
+    private Integer floorNumber;
+    private Integer shelfNumber;
+    private Integer rowNumber;
     private LocalDateTime pickupDeadline;
 
     /** Free-text recipient name as printed on the parcel (may be null). */
@@ -115,6 +118,15 @@ public class Order {
 
     public String getRowLocation() { return rowLocation; }
     public void setRowLocation(String rowLocation) { this.rowLocation = rowLocation; }
+
+    public Integer getFloorNumber() { return floorNumber; }
+    public void setFloorNumber(Integer floorNumber) { this.floorNumber = floorNumber; }
+
+    public Integer getShelfNumber() { return shelfNumber; }
+    public void setShelfNumber(Integer shelfNumber) { this.shelfNumber = shelfNumber; }
+
+    public Integer getRowNumber() { return rowNumber; }
+    public void setRowNumber(Integer rowNumber) { this.rowNumber = rowNumber; }
 
     public void setPickupDeadline(LocalDateTime pickupDeadline) {
         this.pickupDeadline = pickupDeadline;

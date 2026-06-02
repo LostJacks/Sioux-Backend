@@ -5,16 +5,19 @@ import java.util.List;
 public class BuildingTreeDTO {
     private Integer id;
     private String name;
+    private String address;
     private List<FloorDTO> floors;
 
-    public BuildingTreeDTO(Integer id, String name, List<FloorDTO> floors) {
+    public BuildingTreeDTO(Integer id, String name, String address, List<FloorDTO> floors) {
         this.id = id;
         this.name = name;
+        this.address = address;
         this.floors = floors;
     }
 
     public Integer getId() { return id; }
     public String getName() { return name; }
+    public String getAddress() { return address; }
     public List<FloorDTO> getFloors() { return floors; }
 
     public static class FloorDTO {

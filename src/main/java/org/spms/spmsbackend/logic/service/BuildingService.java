@@ -4,6 +4,7 @@ import org.spms.spmsbackend.dtos.BuildingTreeDTO;
 import org.spms.spmsbackend.dtos.CreateBuildingRequest;
 import org.spms.spmsbackend.entity.*;
 import org.spms.spmsbackend.repository.BuildingRepository;
+import org.spms.spmsbackend.repository.FloorRepository;
 import org.spms.spmsbackend.repository.ShelfRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +16,16 @@ import java.util.List;
 public class BuildingService {
 
     private final BuildingRepository buildingRepository;
+    private final FloorRepository floorRepository;
     private final ShelfRepository shelfRepository;
 
-    public BuildingService(BuildingRepository buildingRepository, ShelfRepository shelfRepository) {
+    public BuildingService(
+            BuildingRepository buildingRepository,
+            FloorRepository floorRepository,
+            ShelfRepository shelfRepository
+    ) {
         this.buildingRepository = buildingRepository;
+        this.floorRepository = floorRepository;
         this.shelfRepository = shelfRepository;
     }
 
@@ -27,23 +34,70 @@ public class BuildingService {
         building.setName(request.getName());
         building.setAddress(request.getAddress());
 
-        // TEMP: create 1 floor (since your model requires it)
         FloorEntity floor = new FloorEntity();
         floor.setBuilding(building);
+        floor.setFloorNumber(request.getFloorNumber() != null ? request.getFloorNumber() : 1);
+        floor.setShelves(buildShelves(floor, request.getShelves(), 1));
+        building.setFloors(List.of(floor));
 
-        floor.setFloorNumber(1);
+        return buildingRepository.save(building);
+    }
 
+    @Transactional
+    public BuildingEntity updateBuilding(Integer buildingId, CreateBuildingRequest request) {
+        BuildingEntity building = buildingRepository.findById(buildingId)
+                .orElseThrow(() -> new RuntimeException("Building not found: " + buildingId));
+
+        building.setName(request.getName());
+        building.setAddress(request.getAddress());
+
+        FloorEntity floor = building.getFloors().stream().findFirst().orElseGet(() -> {
+            FloorEntity created = new FloorEntity();
+            created.setBuilding(building);
+            created.setShelves(new ArrayList<>());
+            building.setFloors(List.of(created));
+            return created;
+        });
+
+        if (request.getFloorNumber() != null) {
+            floor.setFloorNumber(request.getFloorNumber());
+        }
+        floorRepository.save(floor);
+
+        int nextShelfNumber = floor.getShelves().stream()
+                .map(ShelfEntity::getShelfNumber)
+                .filter(n -> n != null)
+                .max(Integer::compareTo)
+                .orElse(0) + 1;
+
+        List<ShelfEntity> newShelves = buildShelves(floor, request.getShelves(), nextShelfNumber);
+        if (!newShelves.isEmpty()) {
+            floor.getShelves().addAll(newShelves);
+        }
+
+        return buildingRepository.save(building);
+    }
+
+    private List<ShelfEntity> buildShelves(
+            FloorEntity floor,
+            List<CreateBuildingRequest.ShelfRequest> shelfRequests,
+            int startShelfNumber
+    ) {
         List<ShelfEntity> shelves = new ArrayList<>();
+        if (shelfRequests == null) {
+            return shelves;
+        }
 
-        int shelfIndex = 1;
-        for (CreateBuildingRequest.ShelfRequest shelfReq : request.getShelves()) {
+        int shelfIndex = startShelfNumber;
+        for (CreateBuildingRequest.ShelfRequest shelfReq : shelfRequests) {
+            if (shelfReq == null || shelfReq.getRowCount() <= 0) continue;
+
             ShelfEntity shelf = new ShelfEntity();
             shelf.setFloor(floor);
             shelf.setShelfNumber(shelfIndex++);
             shelf.setRows(new ArrayList<>());
 
             List<ShelfRowEntity> rows = new ArrayList<>();
-
             for (int i = 1; i <= shelfReq.getRowCount(); i++) {
                 ShelfRowEntity row = new ShelfRowEntity();
                 row.setShelf(shelf);
@@ -54,11 +108,7 @@ public class BuildingService {
             shelf.setRows(rows);
             shelves.add(shelf);
         }
-
-        floor.setShelves(shelves);
-        building.setFloors(List.of(floor));
-
-        return buildingRepository.save(building);
+        return shelves;
     }
 
     public List<BuildingEntity> getAllBuildings() {
@@ -96,7 +146,7 @@ public class BuildingService {
                                 return new BuildingTreeDTO.FloorDTO(f.getId(), f.getFloorNumber(), shelves);
                             })
                             .toList();
-                    return new BuildingTreeDTO(b.getId(), b.getName(), floors);
+                    return new BuildingTreeDTO(b.getId(), b.getName(), b.getAddress(), floors);
                 })
                 .toList();
     }

@@ -5,6 +5,7 @@ import org.spms.spmsbackend.exceptions.NotFoundException;
 import org.spms.spmsbackend.logic.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,16 @@ public class NotificationController {
     public ResponseEntity<Notification> markAsRead(@PathVariable int id) {
         try {
             return ResponseEntity.ok(notificationService.markAsRead(id));
+        } catch (NotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable int id) {
+        try {
+            notificationService.deleteNotification(id);
+            return ResponseEntity.noContent().build();
         } catch (NotFoundException ex) {
             return ResponseEntity.notFound().build();
         }

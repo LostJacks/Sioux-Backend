@@ -292,6 +292,15 @@ public class NotificationService {
         return notificationMapper.toDomain(entity);
     }
 
+    // ----- Delete API -----
+
+    public void deleteNotification(int notificationId) {
+        if (!notificationRepository.existsById(notificationId)) {
+            throw new NotFoundException();
+        }
+        notificationRepository.deleteById(notificationId);
+    }
+
     // ----- Read APIs -----
 
     public List<Notification> getForEmployee(int employeeId) {
